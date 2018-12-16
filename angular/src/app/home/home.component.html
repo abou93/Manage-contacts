@@ -1,0 +1,57 @@
+<div class="container">
+  <div class="row">
+      <div class="col-md-4" style="text-align:center;">
+          <h1>CRUD Application</h1>
+      </div>
+      <div class="col-md-8" style="text-align:center; margin-top: 1%">
+        <img src="../../assets/logo-ausy.png" >
+      </div>
+    </div>
+  <div class="row">
+    <div class="col-md-12" style="text-align:center; margin-top: 5%">
+      <h3>List of contacts</h3>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-11">
+        <div class="form-group">
+            <input class="col-md-8" type="text" id="criteria" [(ngModel)]="criteria" (keyup.enter)="filterByName()"/>
+            <input class="col-md-3" type="button" (click)="filterByName()" value="Chercher"/>
+        </div>
+      </div>
+    <div class="col-md-1">
+      <span (click)="addNewPost()" class="btn btn-primary btn-xs"><i class="fas fa-plus"></i></span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col col-lg-12">
+      <div>
+        <table id="mytable" class="table table-bordred table-striped">
+          <thead>
+            <th>Nom</th>
+            <th>Prenom</th>
+            <th>Email</th>
+            <th>Telephone</th>
+            <th>Actions</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of postList">
+              <td>{{item.nom}}</td>
+              <td>{{item.prenom}}</td>
+              <td>{{item.email}}</td>
+              <td><span *ngIf="item.telephone !== ''">+33</span>{{item.telephone}}</td>
+              <td>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default btn" (click)="editPost(item.id)"><i class="fas fa-edit"></i></button>
+                  <button type="button" class="btn btn-default btn" (click)="deletePost(item)"><i class="fas fa-trash-alt"></i></button> 
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <ngb-pagination [collectionSize]="totalItems" [pageSize]="itemsPerPage" [(page)]="page" 
+          [maxSize]="5" [rotate]="true" (pageChange)="loadPage($event)"></ngb-pagination>
+      </div>
+    </div>
+  </div>
+</div>
