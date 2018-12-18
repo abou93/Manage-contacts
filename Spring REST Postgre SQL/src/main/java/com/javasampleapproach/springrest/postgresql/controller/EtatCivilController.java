@@ -1,13 +1,14 @@
 package com.javasampleapproach.springrest.postgresql.controller;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.javasampleapproach.springrest.postgresql.model.EtatCivil;
@@ -30,7 +32,7 @@ public class EtatCivilController {
 
 	@Autowired
 	EtatCivilRepository repository;
-/*
+	/*
 	@GetMapping("/etatCivils")
 	public List<EtatCivil> getAllEtatCivils() {
 		System.out.println("Get all EtatCivils...");
@@ -42,18 +44,15 @@ public class EtatCivilController {
 		return etatCivils;
 	}
 */
-	@GetMapping("/etatCivils")
-	public Page<EtatCivil> getAll() {
-		System.out.println("Get all EtatCivils...");
 
-		List<EtatCivil> etatCivils = new ArrayList<>();
-		Page<EtatCivil> res = repository.findAll(new PageRequest(0, 5));
-		res.getContent().forEach(etatCivils::add);
-		Collections.sort(etatCivils, (ec1, ec2) -> ec1.getId().compareTo(ec2.getId()));
+	@GetMapping("/etatCivils")
+	public Page<EtatCivil> getAll(@RequestParam(defaultValue="0") int page) {
+		
+		System.out.println("Get all EtatCivils...");
+		Page<EtatCivil> res = repository.findAll(PageRequest.of(page, 5, Direction.ASC,"id"));
 
 		return res;
 	}
-
 	@PostMapping(value = "/etatCivils/create")
 	public EtatCivil postEtatCivil(@RequestBody EtatCivil etatCivil) {
 
@@ -78,9 +77,10 @@ public class EtatCivilController {
 	}
 	
 	@GetMapping(value = "etatCivils/findByCriteria/{criteria}")
-	public List<EtatCivil> findByCriteria(@PathVariable String criteria) {
+	public Page<EtatCivil> findByCriteria(@PathVariable String criteria) {
 
 		List<EtatCivil> etatCivils = null;
+		Page<EtatCivil> res = null;
 		String[] criteriaSplited = criteria.split(" ");
 		if (criteriaSplited.length == 2 && criteria.length() != criteriaSplited.length) {
 			String val1 = criteriaSplited[0];
@@ -89,9 +89,11 @@ public class EtatCivilController {
 		} else {
 			etatCivils = repository.findByNomOrPrenom(criteria.toLowerCase());
 		}
-		
+
 		Collections.sort(etatCivils, (ec1, ec2) -> ec1.getId().compareTo(ec2.getId()));
-		return etatCivils;
+		res = new PageImpl<>(etatCivils);
+		
+		return res;
 	}
 	
 	@GetMapping(value = "etatCivils/getById/{id}")
