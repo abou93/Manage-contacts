@@ -49,7 +49,8 @@ public class EtatCivilController {
 	public Page<EtatCivil> getAll(@RequestParam(defaultValue="0") int page) {
 		
 		System.out.println("Get all EtatCivils...");
-		Page<EtatCivil> res = repository.findAll(PageRequest.of(page, 5, Direction.ASC,"id"));
+		if (page != 0) page--;
+		Page<EtatCivil> res = repository.findAll(PageRequest.of(page, 25, Direction.ASC, "id"));
 
 		return res;
 	}

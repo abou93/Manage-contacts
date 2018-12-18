@@ -17,8 +17,9 @@ export class EtatCivilService {
         this.etatCivilIdData= this.etatCivilSource.asObservable();
     }
 
-    getEtatCivilList() : any {
-        const valReturn:Observable<any> = this.http.get(`${this.baseURL}`);
+    getEtatCivilList(page: number) : any {
+        console.log(this.baseURL+"?page="+page);
+        const valReturn:Observable<any> = this.http.get(this.baseURL+"?page="+page);
         return valReturn;
     }
 
