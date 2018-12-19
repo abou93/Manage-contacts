@@ -46,10 +46,15 @@ public class EtatCivilController {
 */
 
 	@GetMapping("/etatCivils")
-	public Page<EtatCivil> getAll(@RequestParam(defaultValue="0") int page) {
+	public Page<EtatCivil> getAll(@RequestParam(defaultValue="0") int page, @RequestParam("id") String attribut, @RequestParam("true") boolean asc) {
 		
 		System.out.println("Get all EtatCivils...");
-		Page<EtatCivil> res = repository.findAll(PageRequest.of(page, 5, Direction.ASC,"id"));
+		Direction dir = Direction.ASC;
+		if (page == 0) page = 1;
+		if (!asc) {
+			dir = Direction.DESC;
+		}
+		Page<EtatCivil> res = repository.findAll(PageRequest.of((page-1), 5, dir, attribut));
 
 		return res;
 	}
@@ -77,7 +82,7 @@ public class EtatCivilController {
 	}
 	
 	@GetMapping(value = "etatCivils/findByCriteria/{criteria}")
-	public Page<EtatCivil> findByCriteria(@PathVariable String criteria) {
+	public Page<EtatCivil> findByCriteria(@PathVariable String criteria, @RequestParam(defaultValue="0") int page) {
 
 		List<EtatCivil> etatCivils = null;
 		Page<EtatCivil> res = null;
@@ -91,7 +96,7 @@ public class EtatCivilController {
 		}
 
 		Collections.sort(etatCivils, (ec1, ec2) -> ec1.getId().compareTo(ec2.getId()));
-		res = new PageImpl<>(etatCivils);
+		res = new PageImpl<>(etatCivils, PageRequest.of(page, 5, Direction.ASC,"id"), etatCivils.size());
 		
 		return res;
 	}
@@ -124,5 +129,19 @@ public class EtatCivilController {
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
+	}
+	
+	@GetMapping("/etatCivils/sortBy")
+	public Page<EtatCivil> getAllSortByAttribut(@RequestParam(defaultValue="0") int page, @RequestParam() String attribut, @RequestParam("true") boolean asc) {
+		
+		System.out.println("Get all EtatCivils...");
+		Direction dir = Direction.ASC;
+		if (page == 0) page = 1;
+		if (!asc) {
+			dir = Direction.DESC;
+		}
+		Page<EtatCivil> res = repository.findAll(PageRequest.of((page-1), 5, dir, attribut));
+
+		return res;
 	}
 }

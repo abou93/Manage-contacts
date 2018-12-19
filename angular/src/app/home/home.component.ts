@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { EtatCivilService } from 'src/app/etat-civil.service';
 
 import { BsModalService, BsModalRef } from "ngx-bootstrap/modal";
@@ -12,32 +12,36 @@ import { EtatCivil } from '../model/etat-civil.model';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   title = 'AngularCRUDExample';
   postList: any[] = [];
   criteria: string;
+  itemsPerPage: number;
+  totalItems: number;
+  page: number;
+  previousPage: number;
   bsModalRef: BsModalRef;
+  sortColumn: string;
+  sortDirection: string;
 
   constructor(private blogService: EtatCivilService, private bsModalService: BsModalService) {
-    //this.getPosts();
+    this.page = 1;
+    this.sortColumn = 'id';
+    this.sortDirection = 'asc';
+  }
+
+  ngOnInit() {
     this.loadData();
   }
-
-  getPosts() {
-    this.blogService.getEtatCivilList().subscribe(data => {
-      this.postList = data;
-    }, error => {
-      console.log("Error while getting posts ", error);
-    });
-  }
-
+  
   addNewPost() {
     this.bsModalRef = this.bsModalService.show(AddNewPostComponent);
     this.bsModalRef.content.event.subscribe(result => {
       if (result == 'OK') {
         setTimeout(() => {
           this.postList = [];
-          this.getPosts();
+          this.page = 1;
+          this.loadData();
         }, 500);
       }
     });
@@ -53,7 +57,8 @@ export class HomeComponent {
       if (result == 'OK') {
         setTimeout(() => {
           this.postList = [];
-          this.getPosts();
+          this.page = 1;
+          this.loadData();
         }, 500);
       }
     });
@@ -66,7 +71,8 @@ export class HomeComponent {
     this.bsModalRef.content.event.subscribe(result => {
       if (result == 'OK') {
         setTimeout(() => {
-          this.getPosts();
+          this.page = 1;
+          this.loadData();
         }, 500);
       }
     });
@@ -74,20 +80,18 @@ export class HomeComponent {
 
   filterByName() {
     if (this.criteria && this.criteria !== '') {
-      this.blogService.filterByCriteria(this.criteria).subscribe(data => {
-        this.postList = data;
-      }, error => {
-        console.log("Error while getting posts ", error);
-      });
+      this.blogService.filterByCriteria(this.criteria, this.page).subscribe(
+        res => {
+          this.itemsPerPage = res['numberOfElements'];
+          this.totalItems = res['totalElements'];
+          this.postList = res['content'];
+          this.page = res['number'];
+        }, error => console.log("Error while getting etat civil ", error)
+      );
     } else {
       this.loadData();
     }
   }
-
-  itemsPerPage: number;
-  totalItems: 5;
-  page: number;
-  previousPage: number;
 
   loadPage(page: number) {
     if (page !== this.previousPage) {
@@ -97,13 +101,14 @@ export class HomeComponent {
   }
 
   loadData() {
-    this.blogService.getEtatCivilList().subscribe(
-      (res: Response) => {
+    this.blogService.getEtatCivilList(this.page).subscribe(
+      res => {
+        this.itemsPerPage = res['numberOfElements'];
+        this.totalItems = res['totalElements'];
         this.postList = res['content'];
-        this.page = res['page'];
-      },
-      (res: Response) => console.log("Error while getting posts ", res.json)
-      )
+        this.page = res['number'];
+      }, error => console.log("Error while getting etat civil ", error)
+    )
   }
 
   onKeydown($event) {

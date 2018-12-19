@@ -17,8 +17,8 @@ export class EtatCivilService {
         this.etatCivilIdData= this.etatCivilSource.asObservable();
     }
 
-    getEtatCivilList() : any {
-        const valReturn:Observable<any> = this.http.get(`${this.baseURL}`);
+    getEtatCivilList(page: number) : any {
+        const valReturn:Observable<any> = this.http.get(this.baseURL + "?page="+page);
         return valReturn;
     }
 
@@ -46,8 +46,8 @@ export class EtatCivilService {
         this.etatCivilSource.next(etatCivilId);
     }
 
-    filterByCriteria(criteria: string) :any {
-        const valReturn:Observable<any> = this.http.get(`${this.baseURL}/findByCriteria/${criteria}`);
+    filterByCriteria(criteria: string, page: number) :any {
+        const valReturn:Observable<any> = this.http.get(`${this.baseURL}/findByCriteria/${criteria}?page=`+page);
         return valReturn; 
     }
 }

@@ -15,7 +15,7 @@
   <div class="row">
     <div class="col-md-11">
         <div class="form-group">
-            <input class="col-md-8" type="text" id="criteria" [(ngModel)]="criteria" (keyup.enter)="filterByName()"/>
+            <input class="col-md-8" type="text" id="criteria" [(ngModel)]="criteria" (input)="filterByName()"/>
             <input class="col-md-3" type="button" (click)="filterByName()" value="Chercher"/>
         </div>
       </div>
@@ -28,10 +28,22 @@
       <div>
         <table id="mytable" class="table table-bordred table-striped">
           <thead>
-            <th>Nom</th>
-            <th>Prenom</th>
-            <th>Email</th>
-            <th>Telephone</th>
+            <th sortable-column="nom">
+                <i class="fa fa-chevron-up" (click)="sortByAttribut()" *ngIf="sortDirection === 'asc'"></i>
+                <i class="fa fa-chevron-down" (click)="sortByAttribut()" *ngIf="sortDirection === 'desc'"></i>
+                Nom</th>
+            <th sortable-column="prenom">
+                <i class="fa fa-chevron-up" (click)="sortByAttribut()" *ngIf="sortDirection === 'asc'"></i>
+                <i class="fa fa-chevron-down" (click)="sortByAttribut()" *ngIf="sortDirection === 'desc'"></i>
+                Prenom</th>
+            <th sortable-column="email">
+                <i class="fa fa-chevron-up" (click)="sortByAttribut()" *ngIf="sortDirection === 'asc'"></i>
+                <i class="fa fa-chevron-down" (click)="sortByAttribut()" *ngIf="sortDirection === 'desc'"></i>
+                Email</th>
+            <th sortable-column="telephone">
+                <i class="fa fa-chevron-up" (click)="sortByAttribut()" *ngIf="sortDirection === 'asc'"></i>
+                <i class="fa fa-chevron-down" (click)="sortByAttribut()" *ngIf="sortDirection === 'desc'"></i>
+                Telephone</th>
             <th>Actions</th>
           </thead>
           <tbody>
@@ -39,7 +51,7 @@
               <td>{{item.nom}}</td>
               <td>{{item.prenom}}</td>
               <td>{{item.email}}</td>
-              <td><span *ngIf="item.telephone !== ''">+33</span>{{item.telephone}}</td>
+              <td><span *ngIf="item.telephone">+33</span>{{item.telephone}}</td>
               <td>
                 <div class="btn-group">
                   <button type="button" class="btn btn-default btn" (click)="editPost(item.id)"><i class="fas fa-edit"></i></button>
@@ -49,8 +61,7 @@
             </tr>
           </tbody>
         </table>
-        <ngb-pagination [collectionSize]="totalItems" [pageSize]="itemsPerPage" [(page)]="page" 
-          [maxSize]="5" [rotate]="true" (pageChange)="loadPage($event)"></ngb-pagination>
+        <ngb-pagination class="col-12 justify-content-center" [collectionSize]="totalItems" [pageSize]="itemsPerPage" [(page)]="page" [maxSize]="5" [rotate]="true" (pageChange)="loadPage($event)"></ngb-pagination>
       </div>
     </div>
   </div>
