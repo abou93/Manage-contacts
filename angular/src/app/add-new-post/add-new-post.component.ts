@@ -17,13 +17,23 @@ export class AddNewPostComponent implements OnInit {
 
   constructor(private builder: FormBuilder, private blogService: EtatCivilService, private bsModalRef: BsModalRef) {
     this.addNewPostForm = this.builder.group({
-      nom: new FormControl('', Validators.required),
-      prenom: new FormControl('', []),
+      nom: new FormControl('', Validators.compose([
+        Validators.required,
+        Validators.pattern('^([a-zA-Z]){2,}$')
+      ])),
+      prenom: new FormControl('', Validators.compose([
+        Validators.required,
+        Validators.pattern('^([a-zA-Z]){2,}$')
+      ])),
       email: new FormControl('', Validators.compose([
         Validators.required,
-        Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')
+//        Validators.pattern('/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/')
+        Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$') 
       ])),
-      telephone: new FormControl('', [])
+      telephone: new FormControl('', Validators.compose([
+        Validators.required,
+        Validators.pattern('^[0-9]{10}$')
+      ]))
     });
 
   }
