@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { EtatCivilService } from 'src/app/etat-civil.service';
 
 import { BsModalService, BsModalRef } from "ngx-bootstrap/modal";
-import { AddNewPostComponent } from '../add-new-post/add-new-post.component';
-import { DeletePostComponent } from '../delete-post/delete-post.component';
-import { EditPostComponent } from '../edit-post/edit-post.component';
+import { AddNewPostComponent } from '../add-new-contact/add-new-contact.component';
+import { DeletePostComponent } from '../delete-contact/delete-contact.component';
+import { EditPostComponent } from '../edit-contact/edit-contact.component';
 import { EtatCivil } from '../model/etat-civil.model';
 
 @Component({
@@ -32,8 +32,10 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.loadData();
+    this.page = 1;
+    this.itemsPerPage = 5;
   }
-  
+
   addNewPost() {
     this.bsModalRef = this.bsModalService.show(AddNewPostComponent);
     this.bsModalRef.content.event.subscribe(result => {
@@ -71,7 +73,6 @@ export class HomeComponent implements OnInit {
     this.bsModalRef.content.event.subscribe(result => {
       if (result == 'OK') {
         setTimeout(() => {
-          this.page = 1;
           this.loadData();
         }, 500);
       }
@@ -82,10 +83,10 @@ export class HomeComponent implements OnInit {
     if (this.criteria && this.criteria !== '') {
       this.blogService.filterByCriteria(this.criteria, this.page).subscribe(
         res => {
-          this.itemsPerPage = res['numberOfElements'];
+          this.itemsPerPage = res['size'];
           this.totalItems = res['totalElements'];
           this.postList = res['content'];
-          this.page = res['number'];
+          this.page = res['number']+1;
         }, error => console.log("Error while getting etat civil ", error)
       );
     } else {
@@ -96,24 +97,26 @@ export class HomeComponent implements OnInit {
   loadPage(page: number) {
     if (page !== this.previousPage) {
       this.previousPage = page;
-      this.loadData();
+      this.loadDataLocal();
     }
   }
 
+  loadDataLocal() {
+    console.log("Error while getting etat civil ", this.postList);
+  }
   loadData() {
     this.blogService.getEtatCivilList(this.page).subscribe(
       res => {
-        this.itemsPerPage = res['numberOfElements'];
+        console.log("Error while getting etat civil ", res);
+        this.itemsPerPage = res['size'];
         this.totalItems = res['totalElements'];
         this.postList = res['content'];
-        this.page = res['number'];
+        this.page = res['number']+1;
       }, error => console.log("Error while getting etat civil ", error)
-    )
+    );
   }
 
   onKeydown($event) {
     this.filterByName();
   }
-
-
 }

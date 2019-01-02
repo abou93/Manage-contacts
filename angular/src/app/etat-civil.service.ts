@@ -18,7 +18,7 @@ export class EtatCivilService {
     }
 
     getEtatCivilList(page: number) : any {
-        const valReturn:Observable<any> = this.http.get(this.baseURL + "?page="+page);
+        const valReturn:Observable<any> = this.http.get(this.baseURL + "?page="+page + "&?attribut="+"id" + "&?asc="+true);
         return valReturn;
     }
 

@@ -32,32 +32,21 @@ public class EtatCivilController {
 
 	@Autowired
 	EtatCivilRepository repository;
+	
 	/*
 	@GetMapping("/etatCivils")
-	public List<EtatCivil> getAllEtatCivils() {
-		System.out.println("Get all EtatCivils...");
-
-		List<EtatCivil> etatCivils = new ArrayList<>();
-		repository.findAll().forEach(etatCivils::add);
-		Collections.sort(etatCivils, (ec1, ec2) -> ec1.getId().compareTo(ec2.getId()));
-
-		return etatCivils;
-	}
-*/
-
-	@GetMapping("/etatCivils")
-	public Page<EtatCivil> getAll(@RequestParam(defaultValue="0") int page, @RequestParam("id") String attribut, @RequestParam("true") boolean asc) {
+	public Page<EtatCivil> getAll(@RequestParam(defaultValue="0") int page, @RequestParam(defaultValue="id") String attribut, @RequestParam(defaultValue="true") boolean asc) {
 		
-		System.out.println("Get all EtatCivils...");
 		Direction dir = Direction.ASC;
 		if (page == 0) page = 1;
 		if (!asc) {
 			dir = Direction.DESC;
 		}
-		Page<EtatCivil> res = repository.findAll(PageRequest.of((page-1), 5, dir, attribut));
+		if (page != 0) page--;
+		Page<EtatCivil> res = repository.findAll(PageRequest.of(page, 5, dir, attribut));
 
 		return res;
-	}
+	}*/
 	@PostMapping(value = "/etatCivils/create")
 	public EtatCivil postEtatCivil(@RequestBody EtatCivil etatCivil) {
 
@@ -68,14 +57,11 @@ public class EtatCivilController {
 	}
 	@DeleteMapping("/etatCivils/{id}")
 	public void deleteEtatCivil(@PathVariable Long id) {
-		System.out.println("Delete EtatCivil with ID = " + id + "...");
 		repository.deleteById(id);
 	}
 	
 	@DeleteMapping("/etatCivils/delete")
 	public ResponseEntity<String> deleteAllEtatCivil() {
-		System.out.println("Delete All EtatCivils...");
-
 		repository.deleteAll();
 
 		return new ResponseEntity<>("All etatCivils have been deleted!", HttpStatus.OK);
@@ -95,7 +81,7 @@ public class EtatCivilController {
 			etatCivils = repository.findByNomOrPrenom(criteria.toLowerCase());
 		}
 
-		Collections.sort(etatCivils, (ec1, ec2) -> ec1.getId().compareTo(ec2.getId()));
+		//Collections.sort(etatCivils, (ec1, ec2) -> ec1.getId().compareTo(ec2.getId()));
 		res = new PageImpl<>(etatCivils, PageRequest.of(page, 5, Direction.ASC,"id"), etatCivils.size());
 		
 		return res;
@@ -115,7 +101,6 @@ public class EtatCivilController {
 
 	@PutMapping("/etatCivils/update/{id}")
 	public ResponseEntity<EtatCivil> updateEtatCivil(@PathVariable("id") long id, @RequestBody EtatCivil etatCivil) {
-		System.out.println("Update EtatCivil with ID = " + id + "...");
 
 		Optional<EtatCivil> etatCivilData = repository.findById(id);
 
@@ -131,10 +116,9 @@ public class EtatCivilController {
 		}
 	}
 	
-	@GetMapping("/etatCivils/sortBy")
-	public Page<EtatCivil> getAllSortByAttribut(@RequestParam(defaultValue="0") int page, @RequestParam() String attribut, @RequestParam("true") boolean asc) {
+	@GetMapping("/etatCivils")
+	public Page<EtatCivil> getAllSortByAttribut(@RequestParam(defaultValue="0") int page, @RequestParam(defaultValue="id") String attribut, @RequestParam(defaultValue="true") boolean asc) {
 		
-		System.out.println("Get all EtatCivils...");
 		Direction dir = Direction.ASC;
 		if (page == 0) page = 1;
 		if (!asc) {
