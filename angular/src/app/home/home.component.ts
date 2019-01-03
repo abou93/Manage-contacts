@@ -14,9 +14,13 @@ import { EtatCivil } from '../model/etat-civil.model';
 })
 export class HomeComponent implements OnInit {
   title = 'AngularCRUDExample';
+
+  pageSize: number;
+  currentPage = 1;
+
   postList: any[] = [];
   criteria: string;
-  itemsPerPage: number;
+  itemsPerPage: number = 5;
   totalItems: number;
   page: number;
   previousPage: number;
@@ -42,7 +46,6 @@ export class HomeComponent implements OnInit {
       if (result == 'OK') {
         setTimeout(() => {
           this.postList = [];
-          this.page = 1;
           this.loadData();
         }, 500);
       }
@@ -59,7 +62,6 @@ export class HomeComponent implements OnInit {
       if (result == 'OK') {
         setTimeout(() => {
           this.postList = [];
-          this.page = 1;
           this.loadData();
         }, 500);
       }
@@ -81,42 +83,35 @@ export class HomeComponent implements OnInit {
 
   filterByName() {
     if (this.criteria && this.criteria !== '') {
-      this.blogService.filterByCriteria(this.criteria, this.page).subscribe(
-        res => {
-          this.itemsPerPage = res['size'];
-          this.totalItems = res['totalElements'];
-          this.postList = res['content'];
-          this.page = res['number']+1;
-        }, error => console.log("Error while getting etat civil ", error)
+      this.blogService.filterByCriteria(this.criteria).subscribe(
+        datas => this.postList = datas,
+        error => console.log("Error while getting etat civil ", error)
       );
     } else {
       this.loadData();
     }
   }
 
-  loadPage(page: number) {
-    if (page !== this.previousPage) {
-      this.previousPage = page;
-      this.loadDataLocal();
-    }
+  public onPageChange(pageNum: number): void {
+    this.pageSize = this.itemsPerPage*(pageNum - 1);
   }
 
-  loadDataLocal() {
-    console.log("Error while getting etat civil ", this.postList);
+  public changePagesize(num: number): void {
+    this.itemsPerPage = this.pageSize + num;
   }
+
   loadData() {
-    this.blogService.getEtatCivilList(this.page).subscribe(
-      res => {
-        console.log("Error while getting etat civil ", res);
-        this.itemsPerPage = res['size'];
-        this.totalItems = res['totalElements'];
-        this.postList = res['content'];
-        this.page = res['number']+1;
-      }, error => console.log("Error while getting etat civil ", error)
+    this.blogService.getEtatCivilList().subscribe(
+      datas => this.postList = datas,
+      error => console.log("Error while getting etat civil ", error)
     );
   }
 
   onKeydown($event) {
     this.filterByName();
+  }
+
+  sortByAttribut() {
+    
   }
 }

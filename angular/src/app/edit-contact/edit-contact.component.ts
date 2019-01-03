@@ -1,13 +1,13 @@
 import { Component, OnInit, Input, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { EtatCivilService } from 'src/app/etat-civil.service';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { EtatCivil } from '../model/etat-civil.model';
 
 @Component({
   selector: 'app-edit-post',
-  templateUrl: './edit-post.component.html',
-  styleUrls: ['./edit-post.component.css']
+  templateUrl: './edit-contact.component.html',
+  styleUrls: ['./edit-contact.component.css']
 })
 export class EditPostComponent implements OnInit {
 
@@ -19,10 +19,21 @@ export class EditPostComponent implements OnInit {
 
   constructor(private builder: FormBuilder, private blogService: EtatCivilService, private bsModalRef: BsModalRef) {
     this.editPostForm = this.builder.group({
-      nom: new FormControl('', []),
-      prenom: new FormControl('', []),
-      email: new FormControl('', []),
-      telephone: new FormControl('', [])
+      nom: new FormControl('', Validators.compose([
+        Validators.required,
+        Validators.pattern('^([a-zA-Z]){2,}$')
+      ])),
+      prenom: new FormControl('', Validators.compose([
+        Validators.required,
+        Validators.pattern('^([a-zA-Z]){2,}$')
+      ])),
+      email: new FormControl('', Validators.compose([
+        Validators.required,
+        Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$') 
+      ])),
+      telephone: new FormControl('', Validators.compose([
+        Validators.pattern('^[0-9]{10}$')
+      ]))
     });
 
     this.blogService.etatCivilIdData.subscribe(id => {
@@ -58,6 +69,14 @@ export class EditPostComponent implements OnInit {
         this.bsModalRef.hide();
       }
     });
+  }
+
+  thereAreError(patern: string) : boolean {
+    if (this.editPostForm.get(patern).valid) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   onClose() {

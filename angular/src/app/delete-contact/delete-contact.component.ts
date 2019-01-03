@@ -4,8 +4,8 @@ import { EtatCivilService } from 'src/app/etat-civil.service';
 
 @Component({
   selector: 'app-delete-post',
-  templateUrl: './delete-post.component.html',
-  styleUrls: ['./delete-post.component.css']
+  templateUrl: './delete-contact.component.html',
+  styleUrls: ['./delete-contact.component.css']
 })
 export class DeletePostComponent implements OnInit {
 

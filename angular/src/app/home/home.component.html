@@ -15,8 +15,9 @@
   <div class="row">
     <div class="col-md-11">
         <div class="form-group">
-            <input class="col-md-8" type="text" id="criteria" [(ngModel)]="criteria" (input)="filterByName()"/>
-            <input class="col-md-3" type="button" (click)="filterByName()" value="Chercher"/>
+            <i class="fas fa-search"></i>
+            <input class="col-md-10" type="text" id="criteria" [(ngModel)]="criteria" placeholder="Rechercher un contact" (input)="filterByName()"/>
+            <input class="col-md-1" type="button" (click)="filterByName()" value="Chercher"/>
         </div>
       </div>
     <div class="col-md-1">
@@ -47,7 +48,7 @@
             <th>Actions</th>
           </thead>
           <tbody>
-            <tr *ngFor="let item of postList">
+            <tr *ngFor="let item of postList | slice: pageSize | slice: 0:itemsPerPage">
               <td>{{item.nom}}</td>
               <td>{{item.prenom}}</td>
               <td>{{item.email}}</td>
@@ -61,7 +62,17 @@
             </tr>
           </tbody>
         </table>
-        <ngb-pagination class="col-12 justify-content-center" [collectionSize]="totalItems" [pageSize]="itemsPerPage" [(page)]="page" [maxSize]="5" [rotate]="true" (pageChange)="loadPage($event)"></ngb-pagination>
+        <div class="container-fluid">
+          <div class="col-10 input-group">
+              <div class="col-8 input-group-addon">
+                  <ngb-pagination [collectionSize]="postList.length" #numPages [pageSize]="itemsPerPage" [(page)]="currentPage" (pageChange)="onPageChange(currentPage)" [boundaryLinks]="true"></ngb-pagination>
+              </div>
+              <div class="col-1 input-group-addon"></div>
+              <div class="col-1 input-group-addon">
+                  <input class="input-sm" type="number" [min]="5" [max]="postList.length" step="5" [(ngModel)]="itemsPerPage" (onClick)="changePagesize(pageSize)">
+              </div>
+          </div>
+          <pre><span class="float-md-left">Page: {{ currentPage }} / {{numPages.pageCount}}</span></pre>
       </div>
     </div>
   </div>

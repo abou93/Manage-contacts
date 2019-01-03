@@ -6,8 +6,8 @@ import { EtatCivil } from '../model/etat-civil.model';
 
 @Component({
   selector: 'app-add-new-post',
-  templateUrl: './add-new-post.component.html',
-  styleUrls: ['./add-new-post.component.css']
+  templateUrl: './add-new-contact.component.html',
+  styleUrls: ['./add-new-contact.component.css']
 })
 export class AddNewPostComponent implements OnInit {
 
@@ -27,11 +27,9 @@ export class AddNewPostComponent implements OnInit {
       ])),
       email: new FormControl('', Validators.compose([
         Validators.required,
-//        Validators.pattern('/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/')
         Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$') 
       ])),
       telephone: new FormControl('', Validators.compose([
-        Validators.required,
         Validators.pattern('^[0-9]{10}$')
       ]))
     });
@@ -53,6 +51,16 @@ export class AddNewPostComponent implements OnInit {
         this.bsModalRef.hide();
       }
     });
+  }
+  
+  thereAreError(patern: string) : boolean {
+    if (this.addNewPostForm.get(patern).value === '') {
+      return true;
+    } else if (this.addNewPostForm.get(patern).valid) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   onClose(){

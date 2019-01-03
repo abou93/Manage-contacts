@@ -1,0 +1,8 @@
+.telephoneInput{
+    display: inline;
+    width: 90%;
+}
+.label-error {
+    color: red;
+    font-size: 20px;
+}
